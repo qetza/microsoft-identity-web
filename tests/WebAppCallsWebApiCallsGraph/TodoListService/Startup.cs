@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.ServiceEssentials.Extensions.AspNetCoreMiddleware;
 
 namespace TodoListService
 {
@@ -38,7 +39,9 @@ namespace TodoListService
                         .EnableTokenAcquisitionToCallDownstreamApi()
                         .AddInMemoryTokenCaches();
 
+            services.AddAuthentication();
             services.AddControllers();
+            services.AddMise(Configuration);
 
             // below code is how customers would use a proxy
             //services.Configure<AadIssuerValidatorOptions>(options => { options.HttpClientName = "cats"; });
@@ -69,6 +72,7 @@ namespace TodoListService
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMise();
 
             app.UseEndpoints(endpoints =>
             {

@@ -39,10 +39,7 @@ namespace WebAppCallsMicrosoftGraph
                             .EnableTokenAcquisitionToCallDownstreamApi()
                                 .AddInMemoryTokenCaches() // Change the builder
 
-                    .AddAuthentication()
-                    .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"))
-
-*/
+            */
 
 
             /* OR
