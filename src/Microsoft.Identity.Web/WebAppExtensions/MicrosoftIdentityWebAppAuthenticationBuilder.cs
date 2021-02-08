@@ -89,11 +89,11 @@ namespace Microsoft.Identity.Web
         {
             // Ensure that configuration options for MSAL.NET, HttpContext accessor and the Token acquisition service
             // (encapsulating MSAL.NET) are available through dependency injection
-            services.Configure(configureMicrosoftIdentityOptions);
+            services.Configure(openIdConnectScheme, configureMicrosoftIdentityOptions);
 
             if (configureConfidentialClientApplicationOptions != null)
             {
-                services.Configure(configureConfidentialClientApplicationOptions);
+                services.Configure(openIdConnectScheme, configureConfidentialClientApplicationOptions);
             }
 
             services.AddHttpContextAccessor();

@@ -66,7 +66,7 @@ namespace Microsoft.Identity.Web.Test
 
             // Config bind actions added correctly
             provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
-            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(string.Empty);
+            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(JwtBearerScheme);
             config.Received(1).GetSection(ConfigSectionName);
 
             AddMicrosoftIdentityWebApi_TestCommon(services, provider, false);
@@ -111,7 +111,7 @@ namespace Microsoft.Identity.Web.Test
 
             // Config bind actions added correctly
             provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
-            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(string.Empty);
+            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(JwtBearerScheme);
             config.Received(1).GetSection(ConfigSectionName);
 
             AddMicrosoftIdentityWebApi_TestCommon(services, provider, false);
@@ -329,8 +329,8 @@ namespace Microsoft.Identity.Web.Test
             var provider = services.BuildServiceProvider();
 
             // Assert config bind actions added correctly
-            provider.GetRequiredService<IOptionsFactory<ConfidentialClientApplicationOptions>>().Create(string.Empty);
-            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(string.Empty);
+            provider.GetRequiredService<IOptionsFactory<ConfidentialClientApplicationOptions>>().Create(JwtBearerScheme);
+            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(JwtBearerScheme);
 
             configMock.Received(1).GetSection(ConfigSectionName);
 

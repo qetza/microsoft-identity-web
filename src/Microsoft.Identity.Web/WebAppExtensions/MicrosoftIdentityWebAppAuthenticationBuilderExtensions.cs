@@ -232,7 +232,7 @@ namespace Microsoft.Identity.Web
                 throw new ArgumentNullException(nameof(configureMicrosoftIdentityOptions));
             }
 
-            builder.Services.Configure(configureMicrosoftIdentityOptions);
+            builder.Services.Configure(openIdConnectScheme, configureMicrosoftIdentityOptions);
             builder.Services.AddHttpClient();
 
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<MicrosoftIdentityOptions>, MicrosoftIdentityOptionsValidation>());
