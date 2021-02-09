@@ -31,8 +31,8 @@ namespace Microsoft.Identity.Web.Test
                 _provider.GetService<IMemoryCache>(),
                 _provider.GetService<IOptions<MsalMemoryTokenCacheOptions>>()),
                 MockHttpContextAccessor.CreateMockHttpContextAccessor(),
-                _provider.GetService<IOptions<MicrosoftIdentityOptions>>(),
-                _provider.GetService<IOptions<ConfidentialClientApplicationOptions>>(),
+                _provider.GetService<IOptionsMonitor<MicrosoftIdentityOptions>>(),
+                _provider.GetService<IOptionsMonitor<ConfidentialClientApplicationOptions>>(),
                 _provider.GetService<IHttpClientFactory>(),
                 _provider.GetService<ILogger<TokenAcquisition>>(),
                 _provider);
@@ -119,7 +119,9 @@ namespace Microsoft.Identity.Web.Test
 
             InitializeTokenAcquisitionObjects();
 
-            IConfidentialClientApplication app = await _tokenAcquisition.GetOrBuildConfidentialClientApplicationAsync().ConfigureAwait(false);
+            IConfidentialClientApplication app = await _tokenAcquisition.GetOrBuildConfidentialClientApplicationAsync(
+                _microsoftIdentityOptions,
+                _applicationOptions).ConfigureAwait(false);
 
             string expectedAuthority = string.Format(
                 CultureInfo.InvariantCulture,
@@ -149,7 +151,9 @@ namespace Microsoft.Identity.Web.Test
 
             InitializeTokenAcquisitionObjects();
 
-            IConfidentialClientApplication app = await _tokenAcquisition.GetOrBuildConfidentialClientApplicationAsync().ConfigureAwait(false);
+            IConfidentialClientApplication app = await _tokenAcquisition.GetOrBuildConfidentialClientApplicationAsync(
+                _microsoftIdentityOptions,
+                _applicationOptions).ConfigureAwait(false);
 
             if (!string.IsNullOrEmpty(redirectUri))
             {

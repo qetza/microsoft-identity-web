@@ -274,13 +274,14 @@ namespace Microsoft.Identity.Web
 
             builder.AddOpenIdConnect(openIdConnectScheme, options => { });
             builder.Services.AddOptions<OpenIdConnectOptions>(openIdConnectScheme)
-                .Configure<IServiceProvider, IOptions<MicrosoftIdentityOptions>>((options, serviceProvider, microsoftIdentityOptions) =>
+                .Configure<IServiceProvider, IOptionsMonitor<MicrosoftIdentityOptions>>((options, serviceProvider, microsoftIdentityOptionsMonitor) =>
                 {
-                    PopulateOpenIdOptionsFromMicrosoftIdentityOptions(options, microsoftIdentityOptions.Value);
+                    MicrosoftIdentityOptions microsoftIdentityOptions = microsoftIdentityOptionsMonitor.Get(openIdConnectScheme);
+                    PopulateOpenIdOptionsFromMicrosoftIdentityOptions(options, microsoftIdentityOptions);
 
                     var b2cOidcHandlers = new AzureADB2COpenIDConnectEventHandlers(
                         openIdConnectScheme,
-                        microsoftIdentityOptions.Value,
+                        microsoftIdentityOptions,
                         serviceProvider.GetRequiredService<ILoginErrorAccessor>());
 
                     if (!string.IsNullOrEmpty(cookieScheme))
@@ -290,14 +291,14 @@ namespace Microsoft.Identity.Web
 
                     if (string.IsNullOrWhiteSpace(options.Authority))
                     {
-                        options.Authority = AuthorityHelpers.BuildAuthority(microsoftIdentityOptions.Value);
+                        options.Authority = AuthorityHelpers.BuildAuthority(microsoftIdentityOptions);
                     }
 
                     // This is a Microsoft identity platform web app
                     options.Authority = AuthorityHelpers.EnsureAuthorityIsV2(options.Authority);
 
                     // B2C doesn't have preferred_username claims
-                    if (microsoftIdentityOptions.Value.IsB2C)
+                    if (microsoftIdentityOptions.IsB2C)
                     {
                         options.TokenValidationParameters.NameClaimType = ClaimConstants.Name;
                     }
@@ -355,7 +356,7 @@ namespace Microsoft.Identity.Web
                                 context.Properties.Items[OidcConstants.AdditionalClaims]);
                         }
 
-                        if (microsoftIdentityOptions.Value.IsB2C)
+                        if (microsoftIdentityOptions.IsB2C)
                         {
                             // When a new Challenge is returned using any B2C user flow different than susi, we must change
                             // the ProtocolMessage.IssuerAddress to the desired user flow otherwise the redirect would use the susi user flow
@@ -365,7 +366,7 @@ namespace Microsoft.Identity.Web
                         await redirectToIdpHandler(context).ConfigureAwait(false);
                     };
 
-                    if (microsoftIdentityOptions.Value.IsB2C)
+                    if (microsoftIdentityOptions.IsB2C)
                     {
                         var remoteFailureHandler = options.Events.OnRemoteFailure;
                         options.Events.OnRemoteFailure = async context =>

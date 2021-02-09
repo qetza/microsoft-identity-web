@@ -65,8 +65,8 @@ namespace Microsoft.Identity.Web.Test
             var provider = services.BuildServiceProvider();
 
             // Config bind actions added correctly
-            provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
-            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(JwtBearerScheme);
+            provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerScheme);
+            provider.GetRequiredService<IOptionsMonitor<MicrosoftIdentityOptions>>().Get(JwtBearerScheme);
             config.Received(1).GetSection(ConfigSectionName);
 
             AddMicrosoftIdentityWebApi_TestCommon(services, provider, false);
@@ -131,7 +131,7 @@ namespace Microsoft.Identity.Web.Test
             var configuredJwtOptions = provider.GetService<IConfigureOptions<JwtBearerOptions>>() as IConfigureNamedOptions<JwtBearerOptions>;
 
             // Issuer validator and certificate set
-            var jwtOptions = provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
+            var jwtOptions = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerScheme);
 
             Assert.NotNull(jwtOptions.Authority);
             Assert.NotNull(jwtOptions.TokenValidationParameters.IssuerValidator);
@@ -162,7 +162,7 @@ namespace Microsoft.Identity.Web.Test
 
             var provider = services.BuildServiceProvider();
 
-            var jwtOptions = provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
+            var jwtOptions = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerScheme);
 
             AddMicrosoftIdentityWebApi_TestJwtBearerTokenValidatedEvent(jwtOptions, tokenValidatedFunc);
         }
@@ -239,7 +239,7 @@ namespace Microsoft.Identity.Web.Test
 
             var provider = services.BuildServiceProvider();
 
-            var jwtOptions = provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
+            var jwtOptions = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerScheme);
 
             if (subscribeToDiagnostics)
             {
@@ -269,7 +269,7 @@ namespace Microsoft.Identity.Web.Test
 
             var provider = services.BuildServiceProvider();
 
-            var jwtOptions = provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
+            var jwtOptions = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerScheme);
 
             if (subscribeToDiagnostics)
             {
@@ -329,8 +329,8 @@ namespace Microsoft.Identity.Web.Test
             var provider = services.BuildServiceProvider();
 
             // Assert config bind actions added correctly
-            provider.GetRequiredService<IOptionsFactory<ConfidentialClientApplicationOptions>>().Create(JwtBearerScheme);
-            provider.GetRequiredService<IOptionsFactory<MicrosoftIdentityOptions>>().Create(JwtBearerScheme);
+            provider.GetRequiredService<IOptionsMonitor<ConfidentialClientApplicationOptions>>().Get(JwtBearerScheme);
+            provider.GetRequiredService<IOptionsMonitor<MicrosoftIdentityOptions>>().Get(JwtBearerScheme);
 
             configMock.Received(1).GetSection(ConfigSectionName);
 
@@ -380,7 +380,7 @@ namespace Microsoft.Identity.Web.Test
             Assert.Equal(ServiceLifetime.Singleton, services.First(s => s.ServiceType == typeof(MicrosoftIdentityIssuerValidatorFactory)).Lifetime);
 
             // Assert token validated event added correctly
-            var jwtOptions = provider.GetRequiredService<IOptionsFactory<JwtBearerOptions>>().Create(JwtBearerScheme);
+            var jwtOptions = provider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(JwtBearerScheme);
             var httpContext = HttpContextUtilities.CreateHttpContext();
             var authScheme = new AuthenticationScheme(JwtBearerDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme, typeof(JwtBearerHandler));
 

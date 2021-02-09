@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -145,8 +146,8 @@ namespace Microsoft.Identity.Web.Test.Integration
             _tokenAcquisition = new TokenAcquisition(
                  _msalTestTokenCacheProvider,
                  MockHttpContextAccessor.CreateMockHttpContextAccessor(),
-                 _provider.GetService<IOptions<MicrosoftIdentityOptions>>(),
-                 _provider.GetService<IOptions<ConfidentialClientApplicationOptions>>(),
+                 _provider.GetService<IOptionsMonitor<MicrosoftIdentityOptions>>(),
+                 _provider.GetService<IOptionsMonitor<ConfidentialClientApplicationOptions>>(),
                  _provider.GetService<IHttpClientFactory>(),
                  _provider.GetService<ILogger<TokenAcquisition>>(),
                  _provider);

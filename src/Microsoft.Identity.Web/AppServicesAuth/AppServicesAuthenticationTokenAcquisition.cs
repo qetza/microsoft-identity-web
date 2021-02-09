@@ -70,7 +70,8 @@ namespace Microsoft.Identity.Web
         public async Task<string> GetAccessTokenForAppAsync(
             string scope,
             string? tenant = null,
-            TokenAcquisitionOptions? tokenAcquisitionOptions = null)
+            TokenAcquisitionOptions? tokenAcquisitionOptions = null,
+            string? authenticationScheme = null)
         {
             // We could use MSI
             if (scope is null)
@@ -92,7 +93,8 @@ namespace Microsoft.Identity.Web
             string? tenantId = null,
             string? userFlow = null,
             ClaimsPrincipal? user = null,
-            TokenAcquisitionOptions? tokenAcquisitionOptions = null)
+            TokenAcquisitionOptions? tokenAcquisitionOptions = null,
+            string? authenticationScheme = null)
         {
             string accessToken = GetAccessToken(CurrentHttpContext?.Request.Headers);
 
@@ -124,15 +126,21 @@ namespace Microsoft.Identity.Web
 
         /// <inheritdoc/>
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task<AuthenticationResult> GetAuthenticationResultForUserAsync(IEnumerable<string> scopes, string? tenantId = null, string? userFlow = null, ClaimsPrincipal? user = null, TokenAcquisitionOptions? tokenAcquisitionOptions = null)
+        public async Task<AuthenticationResult> GetAuthenticationResultForUserAsync(IEnumerable<string> scopes, string? tenantId = null, string? userFlow = null, ClaimsPrincipal? user = null, TokenAcquisitionOptions? tokenAcquisitionOptions = null, string? authenticationScheme = null)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public async Task ReplyForbiddenWithWwwAuthenticateHeaderAsync(IEnumerable<string> scopes, MsalUiRequiredException msalServiceException, HttpResponse? httpResponse = null)
+        public async Task ReplyForbiddenWithWwwAuthenticateHeaderAsync(IEnumerable<string> scopes, MsalUiRequiredException msalServiceException, HttpResponse? httpResponse = null, string? authenticationScheme = null)
         {
             // Not implemented for the moment
+            throw new NotImplementedException();
+        }
+
+        /// <inheritdoc/>
+        public string GetEffectiveAuthenticationScheme(string? authenticationScheme)
+        {
             throw new NotImplementedException();
         }
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
