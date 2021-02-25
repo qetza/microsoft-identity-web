@@ -71,8 +71,9 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Distributed
         protected override async Task<byte[]> ReadCacheBytesAsync(string cacheKey)
         {
             _logger.LogInformation($"Attempting to get cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
-            return await _distributedCache.GetAsync(cacheKey).ConfigureAwait(false);
+            var cache = await _distributedCache.GetAsync(cacheKey).ConfigureAwait(false);
             _logger.LogInformation($"Finished retrieving cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            return cache;
         }
 
         /// <summary>
