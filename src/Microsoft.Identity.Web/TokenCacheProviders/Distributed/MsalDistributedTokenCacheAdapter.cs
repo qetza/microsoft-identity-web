@@ -56,9 +56,9 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Distributed
         /// <returns>A <see cref="Task"/> that completes when key removal has completed.</returns>
         protected override async Task RemoveKeyAsync(string cacheKey)
         {
-            _logger.LogInformation($"Attempting to remove cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            _logger.LogInformation($"Attempting to remove cacheKey {cacheKey} for MSAL at {DateTime.Now}. ");
             await _distributedCache.RemoveAsync(cacheKey).ConfigureAwait(false);
-            _logger.LogInformation($"Finished removing cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            _logger.LogInformation($"Finished removing cacheKey {cacheKey} for MSAL at {DateTime.Now}. ");
         }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Distributed
         /// (account or app).</returns>
         protected override async Task<byte[]> ReadCacheBytesAsync(string cacheKey)
         {
-            _logger.LogInformation($"Attempting to get cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            _logger.LogInformation($"Attempting to get cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}. ");
             var cache = await _distributedCache.GetAsync(cacheKey).ConfigureAwait(false);
-            _logger.LogInformation($"Finished retrieving cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            _logger.LogInformation($"Finished retrieving cache for cacheKey {cacheKey} with bytes: {cache?.Length} at {DateTime.Now}. ");
             return cache;
         }
 
@@ -84,9 +84,9 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Distributed
         /// <returns>A <see cref="Task"/> that completes when a write operation has completed.</returns>
         protected override async Task WriteCacheBytesAsync(string cacheKey, byte[] bytes)
         {
-            _logger.LogInformation($"Attempting to set cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            _logger.LogInformation($"Attempting to set cache for cacheKey {cacheKey} with bytes: {bytes?.Length} for MSAL at {DateTime.Now}. ");
             await _distributedCache.SetAsync(cacheKey, bytes, _cacheOptions).ConfigureAwait(false);
-            _logger.LogInformation($"Finished setting cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}.");
+            _logger.LogInformation($"Finished setting cache for cacheKey {cacheKey} for MSAL at {DateTime.Now}. ");
         }
     }
 }
