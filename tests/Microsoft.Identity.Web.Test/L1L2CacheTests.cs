@@ -235,11 +235,11 @@ namespace Microsoft.Identity.Web.Test
     public class TestMsalDistributedTokenCacheAdapter : MsalDistributedTokenCacheAdapter
     {
         /// <summary>
-        /// This is standard text.
+        /// Msal distributed token cache adapter for testing.
         /// </summary>
-        /// <param name="distributedCache">l2.</param>
-        /// <param name="distributedCacheOptions">l2 options.</param>
-        /// <param name="logger">logger.</param>
+        /// <param name="distributedCache">Distributed cache.</param>
+        /// <param name="distributedCacheOptions">Distributed cache options.</param>
+        /// <param name="logger">Logger.</param>
         public TestMsalDistributedTokenCacheAdapter(
             IDistributedCache distributedCache,
             IOptions<MsalDistributedTokenCacheAdapterOptions> distributedCacheOptions,
