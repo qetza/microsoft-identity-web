@@ -65,7 +65,7 @@ namespace Microsoft.Identity.Web.Test.Integration
             // Assert
             Assert.NotNull(token);
 
-            AssertAppTokenInMemoryCache(TestConstants.ConfidentialClientId, 1);
+            //AssertAppTokenInMemoryCache(TestConstants.ConfidentialClientId, 1);
         }
 
         [Theory]
