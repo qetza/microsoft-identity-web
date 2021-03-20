@@ -342,15 +342,25 @@ namespace Microsoft.Identity.Web.Perf.Client
                 Console.WriteLine($"Exception in AcquireTokenAsync: {ex}");
             }
 
+            // Case 1: signature of the token (the last segment separated by dots)
             string signature = authResult.AccessToken.Substring(authResult.AccessToken.LastIndexOf('.'));
-            if (!tokensBySignedAssertionHash.ContainsKey(signature))
+
+            // Case 2 the assertion hash
+            UserAssertion userAssertion = new UserAssertion(authResult.AccessToken);
+            string signedAssertionHash = typeof(UserAssertion)
+                .GetProperty("AssertionHash", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .GetValue(userAssertion) as string;
+
+            string hash = signedAssertionHash;
+
+            if (!tokensBySignedAssertionHash.ContainsKey(hash))
             {
-                tokensBySignedAssertionHash.Add(signature, new List<string>(new string[] { authResult.AccessToken }));
+                tokensBySignedAssertionHash.Add(hash, new List<string>(new string[] { authResult.AccessToken }));
             }
             else
             {
                 tokensBySignedAssertionHash[signature].Add(authResult.AccessToken);
-                Console.Error.WriteLine($"ERROR: The same hash is used for several ({tokensBySignedAssertionHash[signature].Count}) tokens");
+                Console.Error.WriteLine($"ERROR: The same hash is used for several ({tokensBySignedAssertionHash[hash].Count}) tokens");
             }
 
             return authResult;
