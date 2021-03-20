@@ -191,6 +191,7 @@ namespace Microsoft.Identity.Web.Perf.Client
                             }
                             else
                             {
+/*
                                 httpRequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
                                 httpRequestMessage.Headers.Add(
                                     "Authorization",
@@ -201,6 +202,7 @@ namespace Microsoft.Identity.Web.Perf.Client
                                         authResult?.AccessToken));
 
                                 stopwatch.Start();
+
                                 response = await _httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
                                 stopwatch.Stop();
                                 localMetrics.TotalRequests++;
@@ -223,6 +225,7 @@ namespace Microsoft.Identity.Web.Perf.Client
                                     sb.AppendLine(await response.Content.ReadAsStringAsync());
                                     Console.WriteLine(sb);
                                 }
+*/
                             }
                         }
                     }
@@ -279,6 +282,8 @@ namespace Microsoft.Identity.Web.Perf.Client
             Console.WriteLine(stringBuilder);
         }
 
+        Dictionary<string, List<string>> tokensBySignedAssertionHash = new Dictionary<string, List<string>>();
+
         private async Task<AuthenticationResult> AcquireTokenAsync(int userIndex, Metrics localMetrics)
         {
             var scopes = new string[] { _options.ApiScopes };
@@ -314,7 +319,6 @@ namespace Microsoft.Identity.Web.Perf.Client
                     }
 
                     authResult = await msalPublicClient.AcquireTokenSilent(scopes, account).ExecuteAsync(CancellationToken.None).ConfigureAwait(false);
-                    return authResult;
                 }
                 catch (MsalUiRequiredException)
                 {
@@ -331,13 +335,24 @@ namespace Microsoft.Identity.Web.Perf.Client
                                                         .ConfigureAwait(false);
 
                     _userAccountIdentifiers[userIndex] = authResult.Account.HomeAccountId.Identifier;
-                    return authResult;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception in AcquireTokenAsync: {ex}");
             }
+
+            string signature = authResult.AccessToken.Substring(authResult.AccessToken.LastIndexOf('.'));
+            if (!tokensBySignedAssertionHash.ContainsKey(signature))
+            {
+                tokensBySignedAssertionHash.Add(signature, new List<string>(new string[] { authResult.AccessToken }));
+            }
+            else
+            {
+                tokensBySignedAssertionHash[signature].Add(authResult.AccessToken);
+                Console.Error.WriteLine($"ERROR: The same hash is used for several ({tokensBySignedAssertionHash[signature].Count}) tokens");
+            }
+
             return authResult;
         }
     }
