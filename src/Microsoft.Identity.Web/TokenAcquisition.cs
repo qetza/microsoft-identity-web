@@ -585,9 +585,9 @@ namespace Microsoft.Identity.Web
 
         private void PrepareAuthorityInstanceForMsal()
         {
-            if (_microsoftIdentityOptions.IsB2C && _applicationOptions.Instance.EndsWith("/tfp/"))
+            if (_microsoftIdentityOptions.IsB2C && _applicationOptions.Instance.EndsWith("/tfp/", StringComparison.OrdinalIgnoreCase))
             {
-                _applicationOptions.Instance = _applicationOptions.Instance.Replace("/tfp/", string.Empty).TrimEnd('/') + "/";
+                _applicationOptions.Instance = _applicationOptions.Instance.Replace("/tfp/", string.Empty, StringComparison.OrdinalIgnoreCase).TrimEnd('/') + "/";
             }
             else
             {
@@ -737,7 +737,8 @@ namespace Microsoft.Identity.Web
             {
                 string b2cAuthority = application.Authority.Replace(
                     new Uri(application.Authority).PathAndQuery,
-                    $"/{ClaimConstants.Tfp}/{_microsoftIdentityOptions.Domain}/{userFlow ?? _microsoftIdentityOptions.DefaultUserFlow}");
+                    $"/{ClaimConstants.Tfp}/{_microsoftIdentityOptions.Domain}/{userFlow ?? _microsoftIdentityOptions.DefaultUserFlow}",
+                    StringComparison.OrdinalIgnoreCase);
 
                 builder.WithB2CAuthority(b2cAuthority)
                        .WithSendX5C(_microsoftIdentityOptions.SendX5C);
@@ -814,7 +815,7 @@ namespace Microsoft.Identity.Web
             string authority;
             if (!string.IsNullOrEmpty(tenant))
             {
-                authority = application.Authority.Replace(new Uri(application.Authority).PathAndQuery, $"/{tenant}/");
+                authority = application.Authority.Replace(new Uri(application.Authority).PathAndQuery, $"/{tenant}/", StringComparison.OrdinalIgnoreCase);
             }
             else
             {
