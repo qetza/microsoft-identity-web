@@ -28,24 +28,13 @@ namespace Microsoft.Identity.Web.Resource
         {
             if (aadIssuerValidatorOptions?.Value?.HttpClientName != null && httpClientFactory != null)
             {
-                _configManager =
-                new ConfigurationManager<IssuerMetadata>(
-                    Constants.AzureADIssuerMetadataUrl,
-                    new IssuerConfigurationRetriever(),
-                    httpClientFactory.CreateClient(aadIssuerValidatorOptions.Value.HttpClientName));
-            }
-            else
-           {
-                _configManager =
-                new ConfigurationManager<IssuerMetadata>(
-                    Constants.AzureADIssuerMetadataUrl,
-                    new IssuerConfigurationRetriever());
+                _httpClient = httpClientFactory.CreateClient(aadIssuerValidatorOptions.Value.HttpClientName);
             }
         }
 
         private readonly IDictionary<string, AadIssuerValidator> _issuerValidators = new ConcurrentDictionary<string, AadIssuerValidator>();
 
-        private readonly ConfigurationManager<IssuerMetadata> _configManager;
+        private HttpClient _httpClient;
 
         /// <summary>
         /// Gets an <see cref="AadIssuerValidator"/> for an authority.
@@ -68,18 +57,33 @@ namespace Microsoft.Identity.Web.Resource
                 return aadIssuerValidator;
             }
 
-            // In the constructor, we hit the Azure AD issuer metadata endpoint and cache the aliases. The data is cached for 24 hrs.
-            IssuerMetadata issuerMetadata = _configManager.GetConfigurationAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            ConfigurationManager<IssuerMetadata> configManager = CreateConfigurationManager(authorityHost);
 
+            // In the constructor, we hit the Azure AD issuer metadata endpoint. The data is cached for 24 hrs.
+            IssuerMetadata issuerMetadata = configManager.GetConfigurationAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
+            Uri issuerEndpoint = new Uri(issuerMetadata.Issuer);
             // Add issuer aliases of the chosen authority to the cache
-            IEnumerable<string> aliases = issuerMetadata.Metadata
-                .Where(m => m.Aliases.Any(a => string.Equals(a, authorityHost, StringComparison.OrdinalIgnoreCase)))
-                .SelectMany(m => m.Aliases)
-                .Append(authorityHost) // For B2C scenarios, the alias will be the authority itself
-                .Distinct();
-            _issuerValidators[authorityHost] = new AadIssuerValidator(aliases);
+            _issuerValidators[authorityHost] = new AadIssuerValidator(new string[] { issuerEndpoint.Authority });
 
             return _issuerValidators[authorityHost];
+        }
+
+        private ConfigurationManager<IssuerMetadata> CreateConfigurationManager(string authorityHost)
+        {
+            // https://login.microsoftonline.com/common/.well-known/openid-configuration
+            string metadataEndpoint = $"https://{authorityHost}/common/.well-known/openid-configuration";
+            if (_httpClient != null)
+            {
+                return new ConfigurationManager<IssuerMetadata>(
+                    metadataEndpoint,
+                    new IssuerConfigurationRetriever(),
+                    _httpClient);
+            }
+
+            return new ConfigurationManager<IssuerMetadata>(
+                                               metadataEndpoint,
+                                               new IssuerConfigurationRetriever());
         }
     }
 }

@@ -1225,19 +1225,9 @@
             Model class to hold information parsed from the Azure AD issuer endpoint.
             </summary>
         </member>
-        <member name="P:Microsoft.Identity.Web.InstanceDiscovery.IssuerMetadata.TenantDiscoveryEndpoint">
+        <member name="P:Microsoft.Identity.Web.InstanceDiscovery.IssuerMetadata.Issuer">
             <summary>
-            Tenant discovery endpoint.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Identity.Web.InstanceDiscovery.IssuerMetadata.ApiVersion">
-            <summary>
-            API Version.
-            </summary>
-        </member>
-        <member name="P:Microsoft.Identity.Web.InstanceDiscovery.IssuerMetadata.Metadata">
-            <summary>
-            List of metadata associated with the endpoint.
+            Issuer for the token.
             </summary>
         </member>
         <member name="T:Microsoft.Identity.Web.InstanceDiscovery.Metadata">
@@ -1259,6 +1249,11 @@
         <member name="P:Microsoft.Identity.Web.InstanceDiscovery.Metadata.Aliases">
             <summary>
             Aliases of issuer URLs which are equivalent.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Identity.Web.InstanceDiscovery.Metadata.Issuer">
+            <summary>
+            Issuer for the token.
             </summary>
         </member>
         <member name="T:Microsoft.Identity.Web.ITokenAcquisition">

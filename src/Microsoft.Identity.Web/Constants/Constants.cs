@@ -59,6 +59,7 @@ namespace Microsoft.Identity.Web
         internal const string TenantDiscoveryEndpoint = "tenant_discovery_endpoint";
         internal const string ApiVersion = "api-version";
         internal const string Metadata = "metadata";
+        internal const string Issuer = "issuer";
 
         // Metadata
         internal const string PreferredNetwork = "preferred_network";

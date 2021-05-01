@@ -29,5 +29,11 @@ namespace Microsoft.Identity.Web.InstanceDiscovery
         /// </summary>
         [JsonPropertyName(Constants.Aliases)]
         public List<string> Aliases { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Issuer for the token.
+        /// </summary>
+        [JsonPropertyName(Constants.Issuer)]
+        public string? Issuer { get; set; }
     }
 }
