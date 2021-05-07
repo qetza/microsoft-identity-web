@@ -231,6 +231,12 @@ namespace Microsoft.Identity.Web
 
                 if (authenticationResult != null)
                 {
+                    Logger.TokenAcquisitionMsalAuthenticationResultTime(
+                        _logger,
+                        authenticationResult.AuthenticationResultMetadata.DurationTotalInMs,
+                        authenticationResult.AuthenticationResultMetadata.DurationInHttpInMs,
+                        authenticationResult.AuthenticationResultMetadata.DurationInCacheInMs,
+                        null);
                     return authenticationResult;
                 }
 

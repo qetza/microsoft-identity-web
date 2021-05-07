@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -25,20 +26,20 @@ namespace Microsoft.Identity.Web.Test.Common.TestHelpers
 
         private readonly MsalMemoryTokenCacheOptions _cacheOptions;
 
-        protected override Task<byte[]> ReadCacheBytesAsync(string cacheKey)
+        protected override Task<byte[]> ReadCacheBytesAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             byte[] tokenCacheBytes = (byte[])MemoryCache.Get(cacheKey);
             return Task.FromResult(tokenCacheBytes);
         }
 
-        protected override Task RemoveKeyAsync(string cacheKey)
+        protected override Task RemoveKeyAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             MemoryCache.Remove(cacheKey);
             Count--;
             return Task.CompletedTask;
         }
 
-        protected override Task WriteCacheBytesAsync(string cacheKey, byte[] bytes)
+        protected override Task WriteCacheBytesAsync(string cacheKey, byte[] bytes, CancellationToken cancellationToken = default)
         {
             MemoryCache.Set(cacheKey, bytes, _cacheOptions.AbsoluteExpirationRelativeToNow);
             Count++;

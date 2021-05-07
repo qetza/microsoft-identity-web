@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 
@@ -74,7 +75,7 @@ namespace Microsoft.Identity.Web.TokenCacheProviders
         }
 
         /// <summary>
-        /// if you want to ensure that no concurrent write takes place, use this notification to place a lock on the entry.
+        /// If you want to ensure that no concurrent write takes place, use this notification to place a lock on the entry.
         /// </summary>
         /// <param name="args">Token cache notification arguments.</param>
         /// <returns>A <see cref="Task"/> that represents a completed operation.</returns>
@@ -102,21 +103,24 @@ namespace Microsoft.Identity.Web.TokenCacheProviders
         /// </summary>
         /// <param name="cacheKey">Cache key.</param>
         /// <param name="bytes">Bytes to write.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that represents a completed write operation.</returns>
-        protected abstract Task WriteCacheBytesAsync(string cacheKey, byte[] bytes);
+        protected abstract Task WriteCacheBytesAsync(string cacheKey, byte[] bytes, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Method to be implemented by concrete cache serializers to Read the cache bytes.
         /// </summary>
         /// <param name="cacheKey">Cache key.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>Read bytes.</returns>
-        protected abstract Task<byte[]> ReadCacheBytesAsync(string cacheKey);
+        protected abstract Task<byte[]> ReadCacheBytesAsync(string cacheKey, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Method to be implemented by concrete cache serializers to remove an entry from the cache.
         /// </summary>
         /// <param name="cacheKey">Cache key.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that represents a completed remove key operation.</returns>
-        protected abstract Task RemoveKeyAsync(string cacheKey);
+        protected abstract Task RemoveKeyAsync(string cacheKey, CancellationToken cancellationToken = default);
     }
 }

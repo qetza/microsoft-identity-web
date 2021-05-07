@@ -52,10 +52,11 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Session
         /// </summary>
         /// <param name="cacheKey">Key representing the token cache
         /// (account or app).</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>Read blob.</returns>
-        protected override async Task<byte[]> ReadCacheBytesAsync(string cacheKey)
+        protected override async Task<byte[]> ReadCacheBytesAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
-            await _session.LoadAsync().ConfigureAwait(false);
+            await _session.LoadAsync(cancellationToken).ConfigureAwait(false);
 
             _sessionLock.EnterReadLock();
             try
@@ -82,8 +83,9 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Session
         /// </summary>
         /// <param name="cacheKey">Key for the cache (account ID or app ID).</param>
         /// <param name="bytes">Blob to write to the cache.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that completes when a write operation has completed.</returns>
-        protected override async Task WriteCacheBytesAsync(string cacheKey, byte[] bytes)
+        protected override async Task WriteCacheBytesAsync(string cacheKey, byte[] bytes, CancellationToken cancellationToken = default)
         {
             _sessionLock.EnterWriteLock();
             try
@@ -104,8 +106,9 @@ namespace Microsoft.Identity.Web.TokenCacheProviders.Session
         /// Removes a cache described by its key.
         /// </summary>
         /// <param name="cacheKey">Key of the token cache (user account or app ID).</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that completes when key removal has completed.</returns>
-        protected override async Task RemoveKeyAsync(string cacheKey)
+        protected override async Task RemoveKeyAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             _sessionLock.EnterWriteLock();
             try
