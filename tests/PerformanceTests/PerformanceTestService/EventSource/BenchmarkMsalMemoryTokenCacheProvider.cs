@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -51,8 +52,9 @@ namespace PerformanceTestService
         /// cache.
         /// </summary>
         /// <param name="cacheKey">token cache key.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that completes when key removal has completed.</returns>
-        protected override Task RemoveKeyAsync(string cacheKey)
+        protected override Task RemoveKeyAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             byte[] tokenCacheBytes = (byte[])_memoryCache.Get(cacheKey);
             _memoryCache.Remove(cacheKey);
@@ -70,8 +72,9 @@ namespace PerformanceTestService
         /// Reads a blob from the serialization cache (identified by its key).
         /// </summary>
         /// <param name="cacheKey">Token cache key.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>Read Bytes.</returns>
-        protected override Task<byte[]> ReadCacheBytesAsync(string cacheKey)
+        protected override Task<byte[]> ReadCacheBytesAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             var stopwatch = Stopwatch.StartNew();
             byte[] tokenCacheBytes = (byte[])_memoryCache.Get(cacheKey);
@@ -92,8 +95,9 @@ namespace PerformanceTestService
         /// </summary>
         /// <param name="cacheKey">Token cache key.</param>
         /// <param name="bytes">Bytes to write.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that completes when a write operation has completed.</returns>
-        protected override Task WriteCacheBytesAsync(string cacheKey, byte[] bytes)
+        protected override Task WriteCacheBytesAsync(string cacheKey, byte[] bytes, CancellationToken cancellationToken = default)
         {
             MemoryCacheEntryOptions memoryCacheEntryOptions = new MemoryCacheEntryOptions()
             {

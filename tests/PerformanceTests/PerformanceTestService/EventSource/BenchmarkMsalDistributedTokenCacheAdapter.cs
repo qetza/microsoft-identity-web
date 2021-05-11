@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
@@ -50,11 +51,12 @@ namespace PerformanceTestService.EventSource
         /// from the distributed cache.
         /// </summary>
         /// <param name="cacheKey">Key of the cache to remove.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that completes when key removal has completed.</returns>
-        protected override async Task RemoveKeyAsync(string cacheKey)
+        protected override async Task RemoveKeyAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             var bytes = await _distributedCache.GetAsync(cacheKey).ConfigureAwait(false);           
-            await _distributedCache.RemoveAsync(cacheKey).ConfigureAwait(false);
+            await _distributedCache.RemoveAsync(cacheKey, cancellationToken).ConfigureAwait(false);
             
             MemoryCacheEventSource.Log.IncrementRemoveCount();
             if (bytes != null)
@@ -68,12 +70,13 @@ namespace PerformanceTestService.EventSource
         /// distributed cache.
         /// </summary>
         /// <param name="cacheKey">Key of the cache item to retrieve.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>Read blob representing a token cache for the cache key
         /// (account or app).</returns>
-        protected override async Task<byte[]> ReadCacheBytesAsync(string cacheKey)
+        protected override async Task<byte[]> ReadCacheBytesAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             var stopwatch = Stopwatch.StartNew();
-            var bytes = await _distributedCache.GetAsync(cacheKey).ConfigureAwait(false);
+            var bytes = await _distributedCache.GetAsync(cacheKey, cancellationToken).ConfigureAwait(false);
             stopwatch.Stop();
 
             MemoryCacheEventSource.Log.IncrementReadCount();
@@ -91,11 +94,12 @@ namespace PerformanceTestService.EventSource
         /// </summary>
         /// <param name="cacheKey">Cache key.</param>
         /// <param name="bytes">blob to write.</param>
+        /// <param name="cancellationToken">cancellationToken.</param>
         /// <returns>A <see cref="Task"/> that completes when a write operation has completed.</returns>
-        protected override async Task WriteCacheBytesAsync(string cacheKey, byte[] bytes)
+        protected override async Task WriteCacheBytesAsync(string cacheKey, byte[] bytes, CancellationToken cancellationToken = default)
         {
             var stopwatch = Stopwatch.StartNew();
-            await _distributedCache.SetAsync(cacheKey, bytes, _cacheOptions).ConfigureAwait(false);
+            await _distributedCache.SetAsync(cacheKey, bytes, _cacheOptions, cancellationToken).ConfigureAwait(false);
             stopwatch.Stop();
 
             MemoryCacheEventSource.Log.IncrementWriteCount();
